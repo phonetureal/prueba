@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolidador de Pedidos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-box {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .input-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-box p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-process {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-process:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .results {
+            margin-top: 40px;
+        }
+
+        .results h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .btn-copy {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-copy:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+
+        .instructions {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #2196F3;
+        }
+
+        .instructions h3 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            color: #333;
+        }
+
+        .instructions li {
+            margin: 5px 0;
+        }
+
+        .copy-area {
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .copy-area h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        #resultText {
+            width: 100%;
+            height: 300px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Consolidador de Pedidos</h1>
+        <p class="subtitle">Pega tus datos y obtén los resultados consolidados</p>
+
+        <div class="instructions">
+            <h3>📋 Formato de datos:</h3>
+            <ul>
+                <li><strong>Datos de Pedidos:</strong> Cada línea debe contener: Pedido | Item | Cantidad | Nombre | Ciudad (separados por tabulación)</li>
+                <li><strong>Items Sin Stock:</strong> Un código de item por línea</li>
+                <li>Puedes copiar directamente desde Excel o Google Sheets</li>
+            </ul>
+        </div>
+
+        <div class="input-section">
+            <div class="input-box">
+                <h3>📄 Datos de Pedidos</h3>
+                <p>Pega aquí los datos: Pedido, Item, Cantidad, Nombre, Ciudad</p>
+                <textarea id="datosPedidos" placeholder="Copia directamente desde Excel:
+16647269	BTY	1	JULEISY MENA R	Higüey
+16647269	BRN	1	JULEISY MENA R	Higüey
+16647283	ALT	1	Juan Mercedes	Bávaro"></textarea>
+            </div>
+
+            <div class="input-box">
+                <h3>🚫 Items Sin Stock</h3>
+                <p>Pega aquí la lista de items que no tienen disponibilidad (uno por línea)</p>
+                <textarea id="noStock" placeholder="Ejemplo:
+PFT
+HPR
+MLS"></textarea>
+            </div>
+        </div>
+
+        <button class="btn-process" onclick="procesarDatos()">🚀 Procesar Pedidos</button>
+
+        <div id="message"></div>
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        function parsearDatos(texto) {
+            const lineas = texto.trim().split('\n').filter(l => l.trim());
+            const datos = [];
+            
+            lineas.forEach(linea => {
+                // Dividir por tabulación
+                const partes = linea.split('\t').map(p => p.trim()).filter(p => p);
+                
+                if (partes.length >= 4) {
+                    // Formato: Pedido | Item | Cantidad | Nombre | Ciudad
+                    const pedido = partes[0];
+                    const item = partes[1];
+                    const cantidad = parseInt(partes[2]) || 0;
+                    const nombre = partes[3];
+                    const ciudad = partes.length > 4 ? partes[4] : '';
+                    
+                    datos.push({
+                        pedido: pedido,
+                        item: item,
+                        cantidad: cantidad,
+                        nombre: nombre,
+                        ciudad: ciudad
+                    });
+                }
+            });
+            
+            return datos;
+        }
+
+        function parsearNoStock(texto) {
+            return texto.trim().split('\n')
+                .map(l => l.trim())
+                .filter(l => l.length > 0);
+        }
+
+        function procesarDatos() {
+            try {
+                const textoDatos = document.getElementById('datosPedidos').value;
+                const textoNoStock = document.getElementById('noStock').value;
+
+                if (!textoDatos.trim()) {
+                    mostrarMensaje('Por favor ingresa los datos de pedidos', 'error');
+                    return;
+                }
+
+                const datosPedidos = parsearDatos(textoDatos);
+                const noStock = textoNoStock.trim() ? parsearNoStock(textoNoStock) : [];
+
+                if (datosPedidos.length === 0) {
+                    mostrarMensaje('No se pudieron procesar los datos. Verifica el formato.', 'error');
+                    return;
+                }
+
+                // Procesar pedidos (lógica original)
+                const pedidos = {};
+
+                datosPedidos.forEach(row => {
+                    const { pedido, item, cantidad, nombre, ciudad } = row;
+
+                    if (!pedido || !item || !cantidad) return;
+
+                    if (!pedidos[pedido]) {
+                        pedidos[pedido] = {
+                            items: {},
+                            totalPiezas: 0,
+                            nombre: nombre,
+                            ciudad: ciudad
+                        };
+                    }
+
+                    // Solo contar piezas de items CON stock
+                    if (!noStock.includes(item)) {
+                        if (!pedidos[pedido].items[item]) {
+                            pedidos[pedido].items[item] = 0;
+                        }
+                        pedidos[pedido].items[item] += cantidad;
+                        pedidos[pedido].totalPiezas += cantidad;
+                    }
+                });
+
+                // Generar resultados
+                const resultados = [];
+                for (let pedido in pedidos) {
+                    const data = pedidos[pedido];
+                    const items = data.items;
+                    
+                    const texto = Object.keys(items)
+                        .map(k => k + ":" + items[k])
+                        .join(" | ");
+                    
+                    const pesoTotal = (data.totalPiezas * 0.16 + 0.24).toFixed(2);
+                    
+                    resultados.push({
+                        pedido: pedido,
+                        items: texto,
+                        totalPiezas: data.totalPiezas,
+                        peso: pesoTotal,
+                        nombre: data.nombre,
+                        ciudad: data.ciudad
+                    });
+                }
+
+                mostrarResultados(resultados);
+                mostrarMensaje(`✓ Procesamiento completado. ${resultados.length} pedidos consolidados.`, 'success');
+
+            } catch (error) {
+                mostrarMensaje('❌ Error al procesar: ' + error.message, 'error');
+                console.error(error);
+            }
+        }
+
+        function mostrarResultados(resultados) {
+            let html = '<h2>📊 Resultados Consolidados</h2>';
+            
+            // Tabla
+            html += '<div class="table-container"><table>';
+            html += '<thead><tr>';
+            html += '<th>Pedido</th><th>Items Disponibles</th><th>Total Piezas</th>';
+            html += '<th>Peso (kg)</th><th>Nombre</th><th>Ciudad</th>';
+            html += '</tr></thead><tbody>';
+
+            resultados.forEach(row => {
+                html += '<tr>';
+                html += `<td>${row.pedido}</td>`;
+                html += `<td>${row.items}</td>`;
+                html += `<td>${row.totalPiezas}</td>`;
+                html += `<td>${row.peso}</td>`;
+                html += `<td>${row.nombre}</td>`;
+                html += `<td>${row.ciudad}</td>`;
+                html += '</tr>';
+            });
+
+            html += '</tbody></table></div>';
+
+            // Área de texto copiable
+            html += '<div class="copy-area">';
+            html += '<h4>📋 Copiar resultados (formato texto):</h4>';
+            html += '<textarea id="resultText" readonly></textarea>';
+            html += '<button class="btn-copy" onclick="copiarResultados()">📋 Copiar al Portapapeles</button>';
+            html += '</div>';
+
+            document.getElementById('results').innerHTML = html;
+
+            // Generar texto para copiar
+            let textoResultados = 'Pedido\tItems\tTotal Piezas\tPeso (kg)\tNombre\tCiudad\n';
+            resultados.forEach(row => {
+                textoResultados += `${row.pedido}\t${row.items}\t${row.totalPiezas}\t${row.peso}\t${row.nombre}\t${row.ciudad}\n`;
+            });
+            document.getElementById('resultText').value = textoResultados;
+        }
+
+        function copiarResultados() {
+            const textarea = document.getElementById('resultText');
+            textarea.select();
+            document.execCommand('copy');
+            
+            const btn = event.target;
+            const textoOriginal = btn.textContent;
+            btn.textContent = '✓ ¡Copiado!';
+            btn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            
+            setTimeout(() => {
+                btn.textContent = textoOriginal;
+                btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }, 2000);
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const div = document.getElementById('message');
+            div.innerHTML = `<div class="message ${tipo}">${texto}</div>`;
+            
+            setTimeout(() => {
+                div.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
